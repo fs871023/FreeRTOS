@@ -31,16 +31,20 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
 #include <stdio.h>
 #include <string.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include "timers.h"
+
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+
 typedef struct
 {
 	uint8_t payload[10];
@@ -53,7 +57,7 @@ typedef enum
 	sLedEffect,
 	sRtcMenu,
 	sRtcTimeConfig,
-	sRtcDataConfig,
+	sRtcDateConfig,
 	sRtcReport,
 }state_t;
 
@@ -67,11 +71,12 @@ extern QueueHandle_t q_data;
 extern QueueHandle_t q_print;
 
 extern TimerHandle_t handle_led_timer[4];
+extern TimerHandle_t rtc_timer;
 
 extern state_t curr_state;
 
 extern UART_HandleTypeDef huart2;
-
+extern RTC_HandleTypeDef hrtc;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -88,6 +93,7 @@ extern UART_HandleTypeDef huart2;
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+
 void menu_task(void* parameters);
 void led_task(void* parameters);
 void rtc_task(void* parameters);
@@ -100,6 +106,13 @@ void LED_effect1(void);
 void LED_effect2(void);
 void LED_effect3(void);
 void LED_effect4(void);
+
+void show_time_date(void);
+void show_time_date_itm(void);
+void rtc_configure_time(RTC_TimeTypeDef *time);
+void rtc_configure_date(RTC_DateTypeDef *date);
+int validate_rtc_information(RTC_TimeTypeDef *time , RTC_DateTypeDef *date);
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -169,6 +182,7 @@ void LED_effect4(void);
 #define Audio_SDA_GPIO_Port GPIOB
 #define MEMS_INT2_Pin GPIO_PIN_1
 #define MEMS_INT2_GPIO_Port GPIOE
+
 /* USER CODE BEGIN Private defines */
 
 #define LED1  LD4_Pin
